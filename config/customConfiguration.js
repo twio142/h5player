@@ -425,11 +425,12 @@ const customTaskControlCenter = {
     shortcuts: {
       /* 注册要执行自定义回调操作的快捷键 */
       register: [
-        "ctrl+shift+alt+c",
-        "ctrl+shift+c",
-        "ctrl+alt+c",
-        "ctrl+c",
-        "c",
+        "shift+p",
+        // 'ctrl+shift+alt+c',
+        // 'ctrl+shift+c',
+        // 'ctrl+alt+c',
+        // 'ctrl+c',
+        // 'c'
       ],
       /* 自定义快捷键的回调操作 */
       callback: function (h5Player, taskConf, data) {

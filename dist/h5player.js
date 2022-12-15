@@ -3545,7 +3545,7 @@ const hasUseKey = {
     ctrl: 17,
     alt: 18,
     esc: 27,
-    space: 32,
+    // space: 32,
     '←': 37,
     '↑': 38,
     '→': 39,
@@ -5637,7 +5637,7 @@ const h5Player = {
 
   /* 宽屏 */
   setWideScreen: function () {
-    const isDo = TCC.doTask('wideScreen');
+    const isDo = TCC$1.doTask('wideScreen');
     if (!isDo) {
       debug.log('当前网页不支持宽屏功能');
     }
@@ -5646,7 +5646,7 @@ const h5Player = {
   /* 弹幕/字幕 */
   setSubtitle() {
     const t = this;
-    TCC.doTask('subtitle');
+    TCC$1.doTask('subtitle');
     if (window.location.href.match(/bilibili\.com\/(video|watchlater)/)) {
       t.tips(i18n.t(`tipsMsg.danmu${document.querySelector('.bui-danmaku-switch-input, .bui-switch-input[aria-Label=弹幕]').checked ? 'on' : 'off'}`));
     }
@@ -5662,7 +5662,7 @@ const h5Player = {
 
   /* 连续播放 */
   setAutoNext() {
-    TCC.doTask('autoNext');
+    TCC$1.doTask('autoNext');
     const t = this;
     if (window.location.href.match(/bilibili\.com\/watchlater/)) {
       let autoContinue = [...document.querySelectorAll('.bilibili-player-video-btn-setting-right-playtype-content .bui-radio-input')].filter(x => !x.checked)[0];
@@ -7262,7 +7262,7 @@ const h5Player = {
   keydownEvent: function (event) {
     const t = h5Player;
     const keyCode = event.keyCode;
-    // const key = event.key.toLowerCase()
+    const key = event.key.toLowerCase()
     const player = t.player();
 
     /* 处于可编辑元素中不执行任何快捷键 */
