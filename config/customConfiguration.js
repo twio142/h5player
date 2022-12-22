@@ -445,108 +445,19 @@ const customTaskControlCenter = {
   },
   "youtube.com": {
     wideScreen: "button.ytp-size-button",
-    fullScreen: "button.ytp-fullscreen-button",
+    webFullScreen: undefined,
     subtitle: ".ytp-subtitles-button",
-    next: ".ytp-next-button",
     prev: ".ytp-prev-button",
-    shortcuts: {
-      register: ["escape"],
-      callback: function (h5Player, taskConf, data) {
-        const { event } = data;
-        if (event.keyCode === 27) {
-          /* 取消播放下一个推荐的视频 */
-          if (document.querySelector(".ytp-upnext").style.display !== "none") {
-            document.querySelector(".ytp-upnext-cancel-button").click();
-          }
-        }
-      },
-    },
   },
   "bilibili.com": {
-    fullScreen: function () {
-      const fullScreen =
-        $q(".bpx-player-ctrl-full") ||
-        $q(".squirtle-video-fullscreen") ||
-        $q(".bilibili-player-video-btn-fullscreen");
-      if (fullScreen) {
-        fullScreen.click();
-        return true;
-      }
-    },
-    webFullScreen: function () {
-      const oldWebFullscreen = $q(".bilibili-player-video-web-fullscreen");
-      const webFullscreenEnter =
-        $q(".bpx-player-ctrl-web-enter") ||
-        $q(".squirtle-pagefullscreen-inactive");
-      const webFullscreenLeave =
-        $q(".bpx-player-ctrl-web-leave") ||
-        $q(".squirtle-pagefullscreen-active");
-      if (oldWebFullscreen || (webFullscreenEnter && webFullscreenLeave)) {
-        const webFullscreen =
-          oldWebFullscreen ||
-          (getComputedStyle(webFullscreenLeave).display === "none"
-            ? webFullscreenEnter
-            : webFullscreenLeave);
-        webFullscreen.click();
-
-        /* 取消弹幕框聚焦，干扰了快捷键的操作 */
-        setTimeout(function () {
-          const danmaku =
-            $q(".bpx-player-dm-input") ||
-            $q(".bilibili-player-video-danmaku-input");
-          danmaku && danmaku.blur();
-        }, 1000 * 0.1);
-
-        return true;
-      }
-    },
     wideScreen: ".bilibili-player-video-btn-widescreen, .bpx-player-ctrl-wide",
     subtitle: ".bui-danmaku-switch-input, .bui-switch-input[aria-Label=弹幕]",
-    autoPlay: [
-      ".bpx-player-ctrl-play",
-      ".squirtle-video-start",
-      ".bilibili-player-video-btn-start",
-    ],
     autoNext: ".switch-button",
-    switchPlayStatus: [
-      ".bpx-player-ctrl-play",
-      ".squirtle-video-start",
-      ".bilibili-player-video-btn-start",
-    ],
-    next: [
-      ".bpx-player-ctrl-next",
-      ".squirtle-video-next",
-      ".bilibili-player-video-btn-next",
-      '.bpx-player-ctrl-btn[aria-label="下一个"]',
-    ],
     init: function (h5Player, taskConf) {
       if (window.location.href.match(/bilibili\.com\/watchlater\//)) {
         window.GM_addStyle(`.animated-banner video{ display:none !important }`);
         document.querySelector(".animated-banner video").loop = false;
       }
-    },
-    shortcuts: {
-      register: ["escape"],
-      callback: function (h5Player, taskConf, data) {
-        const { event } = data;
-        if (event.keyCode === 27) {
-          /* 退出网页全屏 */
-          const oldWebFullscreen = $q(".bilibili-player-video-web-fullscreen");
-          if (
-            oldWebFullscreen &&
-            oldWebFullscreen.classList.contains("closed")
-          ) {
-            oldWebFullscreen.click();
-          } else {
-            const webFullscreenLeave =
-              $q(".bpx-player-ctrl-web-leave") ||
-              $q(".squirtle-pagefullscreen-active");
-            if (getComputedStyle(webFullscreenLeave).display !== "none") {
-              webFullscreenLeave.click();
-            }
-          }
-        }
-      },
     },
   },
   "netflix.com": {
