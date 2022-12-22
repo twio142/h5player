@@ -5678,9 +5678,8 @@ const h5Player = {
   /* 回到开头 */
   setBackToStart() {
     const t = this;
-    const player = t.player();
-    t.setCurrentTime(-player.currentTime);
-    t.tips('backtostart');
+    t.setCurrentTime(0);
+    t.tips(i18n.t('tipsMsg.backtostart'));
   },
 
   initPlaybackRate () {
