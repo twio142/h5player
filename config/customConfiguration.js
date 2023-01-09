@@ -90,7 +90,7 @@ const customConfiguration = {
     },
     {
       desc: "放大视频画面 +0.05",
-      key: "shift+=",
+      key: "shift++",
       command: "setScaleUp",
     },
     {
