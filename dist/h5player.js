@@ -7806,7 +7806,7 @@ async function h5PlayerInit () {
     });
 
     /* 初始化跨Tab控制逻辑 */
-    crossTabCtl.init();
+    // crossTabCtl.init();
 
     if (isInIframe()) {
       debug.log('h5Player init suc, in iframe:', window, window.location.href);
