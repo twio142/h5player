@@ -3450,6 +3450,13 @@ var zhCN = {
     stopframe: '定格帧画面：',
     play: '播放',
     pause: '暂停',
+    mute: '静音',
+    unmute: '取消静音',
+    danmuon: '弹幕：开',
+    danmuoff: '弹幕：关',
+    autonexton: '自动连播：开',
+    autonextoff: '自动连播：关',
+    backtostart: '回到开头',
     arpl: '允许自动恢复播放进度',
     drpl: '禁止自动恢复播放进度',
     brightness: '图像亮度：',
@@ -3468,6 +3475,7 @@ var zhCN = {
     vertical: '垂直位移：',
     horizontalMirror: '水平镜像',
     verticalMirror: '垂直镜像',
+    copyurl: '视频链接已复制',
     videozoom: '视频缩放率：'
   }
 };
@@ -3518,6 +3526,13 @@ var enUS = {
     stopframe: 'Stopframe: ',
     play: 'Play',
     pause: 'Pause',
+    mute: 'Mute',
+    unmute: 'Unmute',
+    danmuon: 'Danmaku ON',
+    danmuoff: 'Danmaku OFF',
+    autonexton: 'Auto-Next ON',
+    autonextoff: 'Auto-Next OFF',
+    backtostart: 'Back to start',
     arpl: 'Allow auto resume playback progress',
     drpl: 'Disable auto resume playback progress',
     brightness: 'Brightness: ',
@@ -3536,6 +3551,7 @@ var enUS = {
     vertical: 'Vertical displacement: ',
     horizontalMirror: 'Horizontal mirror',
     verticalMirror: 'vertical mirror',
+    copyurl: 'Video link copied',
     videozoom: 'Video zoom: '
   },
   demo: 'demo-test'
@@ -5867,6 +5883,53 @@ const h5Player = {
     }
   },
 
+  /* 宽屏 */
+  setWideScreen: function () {
+    const isDo = TCC$1.doTask('wideScreen');
+    if (!isDo) {
+      debug.log('当前网页不支持宽屏功能');
+    }
+  },
+
+  /* 弹幕/字幕 */
+  setSubtitle() {
+    const t = this;
+    TCC$1.doTask('subtitle');
+    if (window.location.href.match(/bilibili\.com\/(video|watchlater)/)) {
+      t.tips(i18n.t(`tipsMsg.danmu${document.querySelector('.bui-danmaku-switch-input, .bui-switch-input[aria-Label=弹幕]').checked ? 'on' : 'off'}`));
+    }
+  },
+
+  /* 静音 */
+  setMute() {
+    const t = this;
+    const player = t.player();
+    player.muted = !player.muted;
+    t.tips(i18n.t(`tipsMsg.${player.muted ? '' : 'un'}mute`));
+  },
+
+  /* 连续播放 */
+  setAutoNext() {
+    TCC$1.doTask('autoNext');
+    const t = this;
+    if (window.location.href.match(/bilibili\.com\/watchlater/)) {
+      let autoContinue = [...document.querySelectorAll('.bilibili-player-video-btn-setting-right-playtype-content .bui-radio-input')].filter(x => !x.checked)[0];
+      if (autoContinue) {
+        autoContinue.click();
+        t.tips(autoContinue.nextElementSibling.textContent.trim());
+      }
+    } else if (window.location.href.match(/bilibili\.com\/video/)) {
+      t.tips(i18n.t(`tipsMsg.autonext${document.querySelector('.switch-button.on') ? 'off' : 'on'}`));
+    }
+  },
+
+  /* 回到开头 */
+  setBackToStart() {
+    const t = this;
+    t.setCurrentTime(0);
+    t.tips(i18n.t('tipsMsg.backtostart'));
+  },
+
   initPlaybackRate () {
     const t = this;
     t.playbackRate = t.getPlaybackRate();
@@ -6540,9 +6603,14 @@ const h5Player = {
   /* 视频画面旋转 90 度 */
   setRotate () {
     const t = this;
+    const player = t.player();
+    t.scale = Number(t.scale);
+    let prop = player.videoHeight / player.videoWidth;
+    t.scale = (t.rotate == 0 || t.rotate == 180) ? t.scale * prop : t.scale / prop;
+    t.setTransform(t.scale, t.translate);
     t.rotate += 90;
     if (t.rotate % 360 === 0) t.rotate = 0;
-    t.setTransform(true);
+    player.style.transform = `scale(${t.scale}) translate(${t.translate.x}px, ${t.translate.y}px) rotate( ${t.rotate}deg)`;
     t.tips(i18n.t('tipsMsg.imgrotate') + t.rotate + '°');
   },
 
@@ -6701,6 +6769,13 @@ const h5Player = {
     const isDo = TCC$1.doTask('next');
     if (!isDo) {
       debug.log('当前网页不支持一键播放下个视频功能~');
+    }
+  },
+
+  setPrevVideo() {
+    const isDo = TCC$1.doTask('prev');
+    if (!isDo) {
+      debug.log('当前网页不支持一键播放上个视频功能~');
     }
   },
 
@@ -7439,7 +7514,7 @@ const h5Player = {
   keydownEvent: function (event) {
     const t = h5Player;
     const keyCode = event.keyCode;
-    // const key = event.key.toLowerCase()
+    const key = event.key.toLowerCase()
     const player = t.player();
 
     /* 处于可编辑元素中不执行任何快捷键 */
@@ -7478,8 +7553,8 @@ const h5Player = {
       return false
     }
 
-    /* 切换插件的可用状态 */
-    if (event.ctrlKey && keyCode === 32) {
+    /* 按 alt+v 切换插件的可用状态 */
+    if (event.altKey && keyCode === 86) {
       t.enable = !t.enable;
       if (t.enable) {
         t.tips(i18n.t('tipsMsg.onplugin'));
@@ -7501,6 +7576,12 @@ const h5Player = {
       } else {
         t.tips(i18n.t('tipsMsg.globalmode') + ' OFF');
       }
+    }
+
+    /* 按 shift+y 复制视频 URL */
+    if (event.shiftKey && key === 'y') {
+      setClipboard(player.currentSrc);
+      t.tips(i18n.t('tipsMsg.copyurl'));
     }
 
     /* 非全局模式下，不聚焦则不执行快捷键的操作 */
@@ -7973,7 +8054,7 @@ async function h5PlayerInit () {
     });
 
     /* 初始化跨Tab控制逻辑 */
-    crossTabCtl.init();
+    // crossTabCtl.init();
 
     if (isInIframe()) {
       debug.log('h5Player init suc, in iframe:', window, window.location.href);
