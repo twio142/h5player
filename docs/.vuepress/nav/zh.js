@@ -1,6 +1,4 @@
 module.exports = [
-  { text: '❤️ Hello-AI ❤️', link: 'https://chat.in.anzz.top', target: '_blank' },
-  { text: '免费ChatGPT', link: 'https://hello-ai.anzz.top/', target: '_blank' },
   { text: '文档中心', link: '/home/' },
   {
     text: '相关连接',
