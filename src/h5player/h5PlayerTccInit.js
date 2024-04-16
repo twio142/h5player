@@ -3,7 +3,8 @@ import {
   isObj,
   hideDom,
   mergeObj,
-  eachParentNode
+  eachParentNode,
+  ready
 } from '../libs/utils/index'
 import debug from './debug'
 const $q = function (str) { return document.querySelector(str) }
@@ -24,6 +25,7 @@ const taskConf = {
    * */
   'demo.demo': {
     // disable: true, // 在该域名下禁止插件的所有功能
+    init: function (h5Player, taskConf) {},
     fullScreen: '.fullscreen-btn',
     exitFullScreen: '.exit-fullscreen-btn',
     webFullScreen: function () {},
@@ -70,10 +72,54 @@ const taskConf = {
     exclude: /\t/
   },
   'youtube.com': {
+    init: function (h5Player, taskConf) {
+      if (h5Player.hasBindSkipAdEvents) { return }
+      const startTime = new Date().getTime()
+      let skipCount = 0
+
+      const skipHandler = (element) => {
+        const endTime = new Date().getTime()
+        const time = endTime - startTime
+        /* 过早触发会导致广告无法跳过 */
+        if (time < 3000) {
+          return false
+        }
+
+        /* 页面处于不可见状态时候也不触发 */
+        if (document.hidden) {
+          return false
+        }
+
+        element.click()
+        skipCount++
+
+        debug.log('youtube.com ad skip count', skipCount)
+      }
+
+      ready('.ytp-ad-skip-button', function (element) {
+        skipHandler(element)
+      })
+
+      ready('.ytp-ad-skip-button-modern', function (element) {
+        skipHandler(element)
+      })
+
+      setInterval(function () {
+        const adSkipBtn = document.querySelector('.ytp-ad-skip-button')
+        const adSkipBtnModern = document.querySelector('.ytp-ad-skip-button-modern')
+        adSkipBtn && skipHandler(adSkipBtn)
+        adSkipBtnModern && skipHandler(adSkipBtnModern)
+      }, 1000)
+
+      h5Player.hasBindSkipAdEvents = true
+    },
     webFullScreen: 'button.ytp-size-button',
     fullScreen: 'button.ytp-fullscreen-button',
     next: '.ytp-next-button',
     afterPlay: function (h5Player, taskConf) {
+      /* 解决字幕显示停滞问题 */
+      setTimeout(() => { h5Player.setCurrentTimeUp(0.01, true) }, 0)
+
       /* 解决快捷键暂停、播放后一直有loading图标滞留的问题 */
       const player = h5Player.player()
       const playerwWrap = player.closest('.html5-video-player')
@@ -83,6 +129,10 @@ const taskConf = {
       }
 
       playerwWrap.classList.add('ytp-autohide', 'playing-mode')
+      clearTimeout(playerwWrap.autohideTimer)
+      playerwWrap.autohideTimer = setTimeout(() => {
+        playerwWrap.classList.add('ytp-autohide', 'playing-mode')
+      }, 1000)
 
       if (!playerwWrap.hasBindCustomEvents) {
         const mousemoveHander = (event) => {
@@ -90,7 +140,9 @@ const taskConf = {
 
           clearTimeout(playerwWrap.mousemoveTimer)
           playerwWrap.mousemoveTimer = setTimeout(() => {
-            playerwWrap.classList.add('ytp-autohide', 'ytp-hide-info-bar')
+            if (!player.paused) {
+              playerwWrap.classList.add('ytp-autohide', 'ytp-hide-info-bar')
+            }
           }, 1000 * 2)
         }
 
@@ -130,6 +182,7 @@ const taskConf = {
 
       playerwWrap.classList.remove('ytp-autohide', 'playing-mode')
       playerwWrap.classList.add('paused-mode')
+      clearTimeout(playerwWrap.autohideTimer)
     },
     shortcuts: {
       register: [
@@ -343,7 +396,7 @@ const taskConf = {
               }
 
               window.sessionStorage.playbackRate = targetSpeed
-              h5Player.setCurrentTime(0.01, true)
+              h5Player.setCurrentTimeUp(0.01, true)
               h5Player.setPlaybackRate(targetSpeed, true)
               return true
             }
@@ -466,6 +519,30 @@ const taskConf = {
     next: ['.xgplayer-playswitch-next'],
     init: function (h5Player, taskConf) {
       h5Player.player().setAttribute('crossOrigin', 'anonymous')
+
+      const player = h5Player.player()
+      const wrapEl = player.closest('div[data-e2e="feed-item"]')
+
+      const setVideoTitle = () => {
+        if (wrapEl && wrapEl.querySelector('.video-info-detail')) {
+          const videoInfo = wrapEl.querySelector('.video-info-detail')
+          const accountNameEL = videoInfo.querySelector('.account-name')
+          /* 移除accountName前面的@符号 */
+          const accountName = accountNameEL.innerText.replace(/^@*/, '')
+
+          const titleEl = videoInfo.querySelector('.title')
+          const titleText = titleEl.innerText.trim()
+          const title = `${titleText} - ${accountName}`.replace(/[\\/:*?"<>|]/g, '-')
+
+          wrapEl.setAttribute('data-title', title)
+          player.setAttribute('data-title', title)
+          document.title = title
+          wrapEl.removeEventListener('mouseover', setVideoTitle)
+        }
+      }
+
+      wrapEl && wrapEl.addEventListener('mouseover', setVideoTitle)
+      setTimeout(setVideoTitle, 1200)
     }
   },
   'live.douyin.com': {
@@ -498,6 +575,27 @@ const taskConf = {
     fullScreen: ['button.wbpv-fullscreen-control'],
     // webFullScreen: ['div[title="关闭弹层"]', 'div.wbpv-open-layer-button']
     webFullScreen: ['div.wbpv-open-layer-button']
+  },
+  'twitter.com': {
+    init: function (h5Player, taskConf) {
+      const player = h5Player.player()
+      const wrapEl = player.closest('article[data-testid="tweet"]')
+
+      const setVideoTitle = () => {
+        if (wrapEl && !wrapEl.getAttribute('data-title') && wrapEl.querySelector('div[data-testid="tweetText"]')) {
+          const titleEl = wrapEl.querySelector('div[data-testid="tweetText"]')
+          const titleText = titleEl.innerText.trim()
+          const title = `${titleText}`.replace(/[\\/:*?"<>|]/g, '-')
+
+          wrapEl.setAttribute('data-title', title)
+          player.setAttribute('data-title', title)
+          wrapEl.removeEventListener('mouseover', setVideoTitle)
+        }
+      }
+
+      wrapEl && wrapEl.addEventListener('mouseover', setVideoTitle)
+      setTimeout(setVideoTitle, 600)
+    }
   }
 }
 

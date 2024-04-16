@@ -1,4 +1,26 @@
-# HTML5播放器自定义配置
+# HTML5 Player Custom Configuration
+
+To address the issue of key bindings being overly occupied and conflicts with shortcuts, version `v3.7.0` has introduced the ability for external customization of shortcuts and configurations.  
+
+For security reasons and to minimize potential external interference, the custom external capabilities need to be enabled through the menu to be used:  
+
+<img src="./img/allowExternalCustomConfiguration.png" width=380 alt="allowExternalCustomConfiguration" />
+
+Once enabled, external scripts can be used to define the plugin's shortcuts and other related capabilities.  
+
+## Customization Instructions
+
+::: tip
+Through custom configuration, most personalized needs can be met, but this requires you to have some programming skills.  
+For simple customizations such as defining your own shortcuts, you can join the user group and ask other members if you don't understand.  
+For complex functionalities, if you don't want to bother with customization, you might consider hiring the author for a paid customization service.  
+:::
+
+You can refer to the following script for customization: [https://greasyfork.org/zh-CN/scripts/455396](https://greasyfork.org/zh-CN/scripts/455396)  
+
+## Complete Custom Reference Code
+
+Below is the complete custom reference code:
 
 ```javascript
 // ==UserScript==

@@ -15,4 +15,5 @@ trim_trailing_whitespace = false
 indent_style = tab
 
 [*.bat]
-charset = ansi
+charset = utf-8
+

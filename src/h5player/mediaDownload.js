@@ -1,7 +1,8 @@
 import original from '../libs/utils/original'
-import {
-  mediaSource
-} from '../libs/utils/index'
+import mediaSource from './mediaSource'
+import i18n from './i18n'
+
+const downloadState = new Map()
 
 function download (url, title) {
   const downloadEl = document.createElement('a')
@@ -12,41 +13,43 @@ function download (url, title) {
 }
 
 function mediaDownload (mediaEl, title, downloadType) {
-  if (mediaEl && (mediaEl.src || mediaEl.currentSrc) && !mediaEl.src.startsWith('blob:')) {
+  /**
+   * 当媒体包含source标签时，媒体标签的真实地址将会是currentSrc
+   * https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/currentSrc
+   */
+  const mediaUrl = mediaEl.src || mediaEl.currentSrc
+  const mediaState = downloadState.get(mediaUrl) || {}
+
+  if (mediaEl && mediaUrl && !mediaUrl.startsWith('blob:')) {
     const mediaInfo = {
       type: mediaEl instanceof HTMLVideoElement ? 'video' : 'audio',
       format: mediaEl instanceof HTMLVideoElement ? 'mp4' : 'mp3'
     }
-    let mediaTitle = `${title || mediaEl.title || document.title || Date.now()}_${mediaInfo.type}.${mediaInfo.format}`
-
-    /**
-     * 当媒体包含source标签时，媒体标签的真实地址将会是currentSrc
-     * https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/currentSrc
-     */
-    const mediaUrl = mediaEl.src || mediaEl.currentSrc
+    let mediaTitle = `${title || mediaEl.getAttribute('data-title') || document.title || Date.now()}_${mediaInfo.type}.${mediaInfo.format}`
 
     /* 小于5分钟的媒体文件，尝试通过fetch下载 */
     if (downloadType === 'blob' || mediaEl.duration < 60 * 5) {
-      if (mediaEl.downloading) {
+      if (mediaState.downloading) {
         /* 距上次点下载小于1s的情况直接不响应任何操作 */
-        if (Date.now() - mediaEl.downloading < 1000 * 1) {
+        if (Date.now() - mediaState.downloading < 1000 * 1) {
           return false
         } else {
-          const confirm = original.confirm('文件正在下载中，确定重复执行此操作？')
+          const confirm = original.confirm(i18n.t('mediaDownload.downloading'))
           if (!confirm) {
             return false
           }
         }
       }
 
-      if (mediaEl.hasDownload) {
-        const confirm = original.confirm('该媒体文件已经下载过了，确定需要再次下载？')
+      if (mediaState.hasDownload) {
+        const confirm = original.confirm(i18n.t('mediaDownload.hasDownload'))
         if (!confirm) {
           return false
         }
       }
 
-      mediaTitle = original.prompt('请确认文件标题：', mediaTitle) || mediaTitle
+      mediaTitle = original.prompt(i18n.t('mediaDownload.confirmTitle'), mediaTitle)
+      if (!mediaTitle) { return false }
 
       if (!mediaTitle.endsWith(mediaInfo.format)) {
         mediaTitle = mediaTitle + '.' + mediaInfo.format
@@ -58,14 +61,16 @@ function mediaDownload (mediaEl, title, downloadType) {
         fetchUrl = mediaUrl.replace('http://', 'https://')
       }
 
-      mediaEl.downloading = Date.now()
+      mediaState.downloading = Date.now()
+      downloadState.set(mediaUrl, mediaState)
       fetch(fetchUrl).then(res => {
         res.blob().then(blob => {
           const blobUrl = window.URL.createObjectURL(blob)
           download(blobUrl, mediaTitle)
 
-          mediaEl.hasDownload = true
-          delete mediaEl.downloading
+          mediaState.hasDownload = true
+          delete mediaState.downloading
+          downloadState.set(mediaUrl, mediaState)
           window.URL.revokeObjectURL(blobUrl)
         })
       }).catch(err => {
@@ -73,15 +78,19 @@ function mediaDownload (mediaEl, title, downloadType) {
 
         /* 下载兜底 */
         download(mediaUrl, mediaTitle)
+
+        delete mediaState.downloading
+        mediaState.hasDownload = true
+        downloadState.set(mediaUrl, mediaState)
       })
     } else {
       download(mediaUrl, mediaTitle)
     }
   } else if (mediaSource.hasInit()) {
     /* 下载通过MediaSource管理的媒体文件 */
-    mediaSource.downloadMediaSource()
+    mediaSource.downloadMediaSource(mediaEl, title)
   } else {
-    original.alert('当前媒体文件无法下载，下载功能待优化完善')
+    original.alert(i18n.t('mediaDownload.notSupport'))
   }
 }
 

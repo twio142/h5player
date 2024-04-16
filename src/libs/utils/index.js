@@ -3,11 +3,11 @@ import attrObserver from './attrObserver'
 import hackAttachShadow from './hackAttachShadow'
 import hackEventListener from './hackEventListener'
 import mediaCore from './mediaCore'
-import mediaSource from './mediaSource'
 import { getType, isType, isObj, isErr, isArr, isRegExp, isFunction, isUndefined, isNull } from './typeof'
 import { clone, forIn, getObjKeys, mergeObj, merge, getValByPath, setValByPath } from './object'
 import { quickSort } from './number'
-import { hideDom, eachParentNode, getContainer, loadCSSText, isEditableTarget, isInShadow, isInViewPort } from './dom'
+import { hideDom, eachParentNode, getContainer, loadCSSText, isEditableTarget, isInShadow, isInViewPort, observeVisibility, isOutOfDocument, isCoordinateInElement, coordinateToPosition, calculateDegree } from './dom'
+import { createTrustedHTML, parseHTML } from './html'
 import { inlineStyleToObj, objToInlineStyle } from './style'
 import { fakeUA, userAgentMap } from './fakeUA'
 import { fakeVisible, fakeHidden } from './fakeVisibilityState'
@@ -21,7 +21,6 @@ export {
   hackAttachShadow,
   hackEventListener,
   mediaCore,
-  mediaSource,
   getType,
   isType,
   isObj,
@@ -44,6 +43,11 @@ export {
   isEditableTarget,
   isInShadow,
   isInViewPort,
+  observeVisibility,
+  isOutOfDocument,
+  isCoordinateInElement,
+  coordinateToPosition,
+  calculateDegree,
   eachParentNode,
   getContainer,
   inlineStyleToObj,
@@ -54,6 +58,8 @@ export {
   fakeHidden,
   isInIframe,
   isInCrossOriginFrame,
+  createTrustedHTML,
+  parseHTML,
   throttle,
   parseURL,
   stringifyParams,

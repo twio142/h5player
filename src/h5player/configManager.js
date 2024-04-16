@@ -10,6 +10,9 @@ const configManager = new ConfigManager({
       playbackRate: 1,
       volume: 1,
 
+      /* 最后一次设定的播放速度，默认1.5 */
+      lastPlaybackRate: 1.5,
+
       /* 是否允许存储播放进度 */
       allowRestorePlayProgress: {
 
@@ -17,6 +20,7 @@ const configManager = new ConfigManager({
       /* 视频播放进度映射表 */
       progress: {}
     },
+    enableHotkeys: true,
     hotkeys: [
       {
         desc: '网页全屏',
@@ -43,7 +47,7 @@ const configManager = new ConfigManager({
       {
         desc: '启用或禁止自动恢复播放进度功能',
         key: 'shift+r',
-        command: 'capture'
+        command: 'switchRestorePlayProgressStatus'
       },
       {
         desc: '垂直镜像翻转',
@@ -64,12 +68,14 @@ const configManager = new ConfigManager({
       {
         desc: '缩小视频画面 -0.05',
         key: 'shift+x',
-        command: 'setScaleDown'
+        command: 'setScaleDown',
+        args: -0.05
       },
       {
         desc: '放大视频画面 +0.05',
         key: 'shift+c',
-        command: 'setScaleUp'
+        command: 'setScaleUp',
+        args: 0.05
       },
       {
         desc: '恢复视频画面',
@@ -79,32 +85,38 @@ const configManager = new ConfigManager({
       {
         desc: '画面向右移动10px',
         key: 'shift+arrowright',
-        command: 'setTranslateRight'
+        command: 'setTranslateRight',
+        args: 10
       },
       {
         desc: '画面向左移动10px',
         key: 'shift+arrowleft',
-        command: 'setTranslateLeft'
+        command: 'setTranslateLeft',
+        args: -10
       },
       {
         desc: '画面向上移动10px',
         key: 'shift+arrowup',
-        command: 'setTranslateUp'
+        command: 'setTranslateUp',
+        args: 10
       },
       {
         desc: '画面向下移动10px',
         key: 'shift+arrowdown',
-        command: 'setTranslateDown'
+        command: 'setTranslateDown',
+        args: -10
       },
       {
         desc: '前进5秒',
         key: 'arrowright',
-        command: 'setCurrentTimeUp'
+        command: 'setCurrentTimeUp',
+        args: 5
       },
       {
         desc: '后退5秒',
         key: 'arrowleft',
-        command: 'setCurrentTimeDown'
+        command: 'setCurrentTimeDown',
+        args: -5
       },
       {
         desc: '前进30秒',
@@ -148,14 +160,16 @@ const configManager = new ConfigManager({
         command: 'switchPlayStatus'
       },
       {
-        desc: '减速播放 -0.1',
+        desc: '减速播放',
         key: 'x',
-        command: 'setPlaybackRateDown'
+        command: 'setPlaybackRateDown',
+        args: -0.1
       },
       {
-        desc: '加速播放 +0.1',
+        desc: '加速播放',
         key: 'c',
-        command: 'setPlaybackRateUp'
+        command: 'setPlaybackRateUp',
+        args: 0.1
       },
       {
         desc: '正常速度播放',
@@ -288,6 +302,11 @@ const configManager = new ConfigManager({
         command: 'setNextVideo'
       },
       {
+        desc: '插入debugger断点',
+        key: 'ctrl+shift+alt+d',
+        command: 'debuggerNow'
+      },
+      {
         desc: '执行JS脚本',
         key: 'ctrl+j ctrl+s',
         command: () => {
@@ -296,6 +315,18 @@ const configManager = new ConfigManager({
         when: ''
       }
     ],
+    mouse: {
+      enable: false,
+      /* 长按多久响应鼠标长按事件 */
+      longPressTime: 600
+    },
+    ui: {
+      enable: true,
+      alwaysShow: false
+    },
+    download: {
+      enable: true
+    },
     enhance: {
     /* 不禁用默认的调速逻辑，则在多个视频切换时，速度很容易被重置，所以该选项默认开启 */
       blockSetPlaybackRate: true,
@@ -310,17 +341,30 @@ const configManager = new ConfigManager({
       allowCrossOriginControl: true,
       unfoldMenu: false
     },
-    debug: false
+    language: 'auto',
+    debug: false,
+    blacklist: {
+      /**
+       * url黑名单，在这些url下面禁止运行h5player脚本
+       * 以适应一些难以排查、或难以通一兼容的页面，但又不希望对整个网站进行禁用的情况
+       * 例如：B站首页
+       */
+      urls: [
+        'https://www.bilibili.com/'
+      ],
+      domains: []
+    }
   }
 })
 
 async function initUiConfigManager () {
-  const isUiConfigPage = location.href.indexOf('h5player.anzz.top/tools/json-editor') > -1
+  const isUiConfigPage = location.href.indexOf('h5player.anzz.top/tools/json-editor') > -1 || location.href.indexOf('ankvps.gitee.io/h5player/tools/json-editor') > -1
   const isUiConfigMode = location.href.indexOf('saveHandlerName=saveH5PlayerConfig') > -1
   if (!isUiConfigPage || !isUiConfigMode) return
 
   function init (pageWindow) {
     const config = JSON.parse(JSON.stringify(configManager.getConfObj()))
+    delete config.recommendList
     if (Array.isArray(config.hotkeys)) {
       /* 给hotkeys的各自项添加disabled选项，以便在界面侧可以快速禁用或启用某个项 */
       config.hotkeys.forEach(item => {
@@ -333,11 +377,13 @@ async function initUiConfigManager () {
     pageWindow.jsonEditor.set(config)
 
     // pageWindow.jsonEditor.collapseAll()
-    pageWindow.jsonEditor.expandAll()
+    pageWindow.jsonEditor.expandAll && pageWindow.jsonEditor.expandAll()
 
     pageWindow.saveH5PlayerConfig = function (editor) {
       try {
+        const defConfig = configManager.getConfObj()
         const newConfig = editor.get()
+        newConfig.recommendList = defConfig.recommendList || []
         configManager.setGlobalStorageByObj(newConfig)
         alert('配置已更新')
       } catch (e) {
