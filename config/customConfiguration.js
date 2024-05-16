@@ -85,7 +85,7 @@ const customConfiguration = {
     },
     {
       desc: "缩小视频画面 -0.05",
-      key: "-",
+      key: "Minus",
       command: "setScaleDown",
     },
     {
@@ -95,7 +95,7 @@ const customConfiguration = {
     },
     {
       desc: "恢复视频画面",
-      key: "=",
+      key: "Equal",
       command: "resetTransform",
     },
     {
@@ -170,24 +170,24 @@ const customConfiguration = {
     },
     {
       desc: "切换暂停/播放",
-      key: "space",
+      key: "p",
       command: "switchPlayStatus",
     },
     {
       desc: "减速播放 -0.2",
-      key: ",",
+      key: "Comma",
       command: "setPlaybackRateDown",
       args: [-0.2],
     },
     {
       desc: "加速播放 +0.2",
-      key: ".",
+      key: "Period",
       command: "setPlaybackRateUp",
       args: [0.2],
     },
     {
       desc: "正常速度播放",
-      key: "/",
+      key: "Slash",
       command: "resetPlaybackRate",
     },
     {
@@ -333,12 +333,22 @@ const customConfiguration = {
     },
     {
       desc: "播放上一集",
-      key: "[",
+      key: "BracketLeft",
+      command: "setPrevVideo",
+    },
+    {
+      desc: "播放上一集",
+      key: "shift+BracketLeft",
       command: "setPrevVideo",
     },
     {
       desc: "播放下一集",
-      key: "]",
+      key: "BracketRight",
+      command: "setNextVideo",
+    },
+    {
+      desc: "播放下一集",
+      key: "shift+BracketRight",
       command: "setNextVideo",
     },
     {
@@ -353,9 +363,9 @@ const customConfiguration = {
     },
     {
       desc: "自动连播",
-      key: "\\",
+      key: "Backslash",
       command: "setAutoNext",
-      when: "window.location.href.match(/bilibili.com/(video|watchlater)/)",
+      when: "window.location.href.match(/bilibili\.com\/(video|watchlater)/)",
     },
     {
       desc: "BiliBili 聚焦弹幕框",
@@ -369,7 +379,7 @@ const customConfiguration = {
           document.querySelector(".bpx-player-dm-input").blur();
         }
       },
-      when: "window.location.href.match(/bilibili.com/(video|watchlater)/)",
+      when: "window.location.href.match(/bilibili\.com\/(video|watchlater)/)",
     },
     {
       desc: "YouTube 小窗播放",
@@ -381,7 +391,7 @@ const customConfiguration = {
           document.querySelector(".ytp-miniplayer-button-top-left").click();
         }
       },
-      when: "window.location.href.match(/youtube.com//)",
+      when: "window.location.href.match(/youtube.com\//)",
     },
   ],
   enhance: {
@@ -425,12 +435,11 @@ const customTaskControlCenter = {
     shortcuts: {
       /* 注册要执行自定义回调操作的快捷键 */
       register: [
-        "shift+p",
-        // 'ctrl+shift+alt+c',
-        // 'ctrl+shift+c',
-        // 'ctrl+alt+c',
-        // 'ctrl+c',
-        // 'c'
+        "ctrl+shift+alt+c",
+        // "ctrl+shift+c",
+        // "ctrl+alt+c",
+        // "ctrl+c",
+        // "c"
       ],
       /* 自定义快捷键的回调操作 */
       callback: function (h5Player, taskConf, data) {
@@ -453,6 +462,7 @@ const customTaskControlCenter = {
     wideScreen: ".bilibili-player-video-btn-widescreen, .bpx-player-ctrl-wide",
     subtitle: ".bui-danmaku-switch-input, .bui-switch-input[aria-Label=弹幕]",
     autoNext: ".switch-button",
+    prev: ".bpx-player-ctrl-prev",
     init: function (h5Player, taskConf) {
       if (window.location.href.match(/bilibili\.com\/watchlater\//)) {
         window.GM_addStyle(`.animated-banner video{ display:none !important }`);
