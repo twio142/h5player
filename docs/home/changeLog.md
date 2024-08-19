@@ -1,5 +1,37 @@
 # Update Log
 
+## 4.3.2 [2024/10/24]
+
+* Fix the persistent UI display issue in Tencent Video.
+* Optimize the underlying logic for UI visibility and invisibility to enhance compatibility.
+
+## 4.3.1 [2024/10/19]
+
+* Adjust and refine the script introduction copy.
+
+## 4.3.0 [2024/10/16]
+
+* Disable recommended modules to let the script focus on core functions.
+* Adjust the menu order to facilitate global shutdown of the graphical interface.
+
+## 4.2.8 [2024/08/01]
+
+* Optimize the underlying hook logic to reduce false positives.
+* Solve the issue with Cloudflare CAPTCHA validation anomalies.
+
+## 4.2.7 [2024/05/24]
+
+* Solve the issue of not being able to pass Cloudflare's CAPTCHA verification.
+
+## 4.2.6 [2024/05/01]
+
+* Fix the issue of inaccessible Chinese document guidance.
+
+## 4.2.5 [2024/04/18]
+
+* Added a frequently asked questions menu option.
+* Fixed the URL paths for other document links.
+
 ## 4.2.4 [2024/03/29]
 
 * Added a switch configuration option for the mouse control module.

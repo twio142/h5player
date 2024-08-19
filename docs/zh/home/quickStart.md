@@ -48,14 +48,6 @@
 - 支持直播视频流提取
 - 支持配置式添加自定义功能
 
-## 关于[@antifeature](https://greasyfork.org/help/antifeatures)
-
-脚本出于自用需要和技术热情开发的，但依然会受到一部分人的无端指责，和莫名奇妙的差评或举报，与其将精力耗费在跟这些人的纠缠上，不如主动声明[@antifeature](https://greasyfork.org/help/antifeatures)（也是greasyfork社区的规范要求），过滤掉那些有严重白嫖洁癖，还喜欢站在道德制高点上对他人指手画脚、评头论足，或从不看文档的人！脚本没有会员内容，也不会要求付费、点赞、关注什么号才能使用，更加不会主动植入百度统计、谷歌统计这类广告追踪脚本。  
-
-但为了能持续地良性迭代，脚本在UI界面上，以文本的形式加入少量的、不影响用户体验的推广链接，不能接受的请在`菜单 > 图形界面`里禁用用户图形界面即可，如果还是不能接受，请不要使用该脚本。  
-
-特别说明：脚本已提供丰富的快捷键控制能力，非常适合喜欢快捷、高效的用户使用，关闭图形界面不会影响脚本的核心功能，用不到图形界面的用户请放心关闭。  
-
 ## 交流群
 
 <br />
@@ -69,7 +61,7 @@
 ## 功能定制
 
 脚本已经支持了大部分常用的功能，如果你有更多的需求，可以通过自定义配置来实现。  
-具体参考：[自定义配置](https://h5player.anzz.top/home/customConfiguration.html)  
+具体参考：[自定义配置](./customConfiguration.md)  
 <br />
 如果你不懂编程或不想折腾，又有相对复杂的功能需求，可以考虑找作者`付费定制`；  
 [通过上面的微信或者TG联系作者](#交流群)  
@@ -83,12 +75,12 @@
 
 - **[h5player.user.js (点我直接安装)](https://update.greasyfork.org/scripts/381682/HTML5%E8%A7%86%E9%A2%91%E6%92%AD%E6%94%BE%E5%99%A8%E5%A2%9E%E5%BC%BA%E8%84%9A%E6%9C%AC.user.js)**
 
-更详细的安装帮助看这里：[详细安装教程](https://h5player.anzz.top/home/install.html)  
+更详细的安装帮助看这里：[详细安装教程](./install.md)  
 
 ## 使用文档
 
-- [功能手册](https://h5player.anzz.top/home/feature.html)
-- [常见问题Q&A](https://h5player.anzz.top/home/q&a.html)
+- [功能手册](./feature.md)  
+- [常见问题Q&A](./q&a.md)  
   
 ## 快捷键列表
 
@@ -203,13 +195,13 @@
 
 ## 更新日志
 
-- [H5player ChangeLog](https://github.com/xxxily/h5player/blob/master/changeLog.md)
+- [H5player ChangeLog](./changeLog.md)
 
 ## 支持作者
 
 如果我的努力给你带来了便利，请不要吝啬你的赞赏  
 
-[100万级安装量的开源作品，一年有多少打赏收入？](https://u.anzz.top/aboutdonate)  
+[100万级安装量的开源作品，一年有多少打赏收入？](./aboutDonate.md)  
 
 <p>
   <a href="https://h5player.anzz.top" target="_blank">
