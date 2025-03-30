@@ -1,3 +1,181 @@
+// 检测环境
+const isExtension = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) ||
+                    (typeof browser !== 'undefined' && browser.runtime);
+
+// 创建一个兼容层，模拟 GM_* 函数
+function initGMFunctions () {
+  // 为扩展环境创建GM函数的兼容实现
+  window.GM_setValue = function (key, value) {
+    window.postMessage({
+      type: 'h5player_setValue',
+      data: { key, value }
+    }, '*');
+    // 同时在localStorage中存储一份，以便立即访问
+    try {
+      localStorage.setItem(`h5player_${key}`, JSON.stringify(value));
+    } catch (e) {
+      console.error('存储到localStorage失败:', e);
+    }
+  };
+
+  window.GM_getValue = function (key, defaultValue) {
+    // 先从localStorage获取，以便同步返回
+    try {
+      const value = localStorage.getItem(`h5player_${key}`);
+      if (value !== null) {
+        return JSON.parse(value)
+      }
+    } catch (e) {
+      console.error('从localStorage获取失败:', e);
+    }
+
+    // 异步从storage获取
+    const callbackId = Date.now();
+    window.postMessage({
+      type: 'h5player_getValue',
+      data: { key, callbackId }
+    }, '*');
+
+    return defaultValue
+  };
+
+  window.GM_deleteValue = function (key) {
+    window.postMessage({
+      type: 'h5player_deleteValue',
+      data: { key }
+    }, '*');
+    // 同时从localStorage中删除
+    try {
+      localStorage.removeItem(`h5player_${key}`);
+    } catch (e) {
+      console.error('从localStorage删除失败:', e);
+    }
+  };
+
+  window.GM_listValues = function () {
+    // 从localStorage获取所有键
+    const keys = [];
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('h5player_')) {
+          keys.push(key.substring(9));
+        }
+      }
+    } catch (e) {
+      console.error('从localStorage获取键列表失败:', e);
+    }
+    return keys
+  };
+
+  window.GM_addValueChangeListener = function (name, callback) {
+    // 简化实现，实际上无法完全模拟
+    const listenerId = Date.now();
+    return listenerId
+  };
+
+  window.GM_removeValueChangeListener = function (listenerId) {
+    // 简化实现
+  };
+
+  window.GM_setClipboard = function (text) {
+    window.postMessage({
+      type: 'h5player_setClipboard',
+      data: { text }
+    }, '*');
+  };
+
+  window.GM_addStyle = function (css) {
+    const style = document.createElement('style');
+    style.textContent = css;
+    document.head.appendChild(style);
+    return style
+  };
+
+  // 存储菜单项
+  const menuItems = [];
+  let menuIdCounter = 1;
+
+  window.GM_registerMenuCommand = function (name, callback) {
+    const menuId = menuIdCounter++;
+
+    // 存储菜单项
+    menuItems.push({
+      id: menuId,
+      title: name,
+      fn: callback
+    });
+
+    // 通知扩展更新面板
+    window.postMessage({
+      type: 'h5player_updatePanel',
+      data: { items: menuItems }
+    }, '*');
+
+    return menuId
+  };
+
+  window.GM_unregisterMenuCommand = function (menuCmdId) {
+    // 查找并移除菜单项
+    const index = menuItems.findIndex(item => item.id === menuCmdId);
+    if (index !== -1) {
+      menuItems.splice(index, 1);
+
+      // 通知扩展更新面板
+      window.postMessage({
+        type: 'h5player_updatePanel',
+        data: { items: menuItems }
+      }, '*');
+    }
+  };
+
+  // 监听来自content.js的菜单执行消息
+  window.addEventListener('message', function (event) {
+    if (event.source !== window) return
+    if (!event.data || !event.data.type) return
+
+    const { type, data } = event.data;
+
+    if (type === 'h5player_executeMenuItem') {
+    // 执行菜单功能
+      const index = data.index;
+      if (menuItems[index] && typeof menuItems[index].fn === 'function') {
+        try {
+          menuItems[index].fn();
+        } catch (e) {
+          console.error('执行菜单功能失败:', e);
+        }
+      }
+    }
+  });
+
+  window.GM_openInTab = function (url, options) {
+    window.open(url, '_blank');
+  };
+
+  window.GM_getTab = function (callback) {
+    callback({});
+  };
+
+  window.GM_saveTab = function (tab) {
+    // 简化实现
+  };
+
+  window.GM_getTabs = function (callback) {
+    callback({});
+  };
+
+  // 设置unsafeWindow为window
+  window.unsafeWindow = window;
+}
+
+if (isExtension) { initGMFunctions(); }
+
+// 在这里引入原始的h5player代码
+// 这里应该是原始脚本的代码，但为了简化，我们使用import语句
+// 实际上，你需要将原始脚本的代码复制到这里
+// 或者使用构建工具将它们合并成一个文件
+
 // ==UserScript==
 // @name         音视频增强脚本：无极调速|倍速快学|快乐刷剧|视频下载|画面截图等「适用大部分网站」
 // @name:en      Audio and Video Enhancement Script: Supports infinite speed adjustment, video downloading, and more.
@@ -3892,14 +4070,6 @@ var zhCN = {
     stopframe: '定格帧画面：',
     play: '播放',
     pause: '暂停',
-    mute: '静音',
-    unmute: '取消静音',
-    danmuon: '弹幕：开',
-    danmuoff: '弹幕：关',
-    autonexton: '自动连播：开',
-    autonextoff: '自动连播：关',
-    backtostart: '回到开头',
-    copyurl: '视频链接已复制',
     arpl: '允许自动恢复播放进度',
     drpl: '禁止自动恢复播放进度',
     brightness: '图像亮度：',
@@ -4048,14 +4218,6 @@ var enUS = {
     stopframe: 'Stopframe: ',
     play: 'Play',
     pause: 'Pause',
-    mute: 'Mute',
-    unmute: 'Unmute',
-    danmuon: 'Danmaku ON',
-    danmuoff: 'Danmaku OFF',
-    autonexton: 'Auto-Next ON',
-    autonextoff: 'Auto-Next OFF',
-    backtostart: 'Back to start',
-    copyurl: 'Video link copied',
     arpl: 'Allow auto resume playback progress',
     drpl: 'Disable auto resume playback progress',
     brightness: 'Brightness: ',
@@ -11716,7 +11878,7 @@ const h5playerUI = function (window) {var h5playerUI = (function () {
           `
         }
       }).join('')
-    }
+    } 
   </div>
   `
   }
@@ -12928,53 +13090,6 @@ const h5Player = {
     }
   },
 
-  /* 宽屏 */
-  setWideScreen: function () {
-    const isDo = TCC.doTask('wideScreen');
-    if (!isDo) {
-      debug.log('当前网页不支持宽屏功能');
-    }
-  },
-
-  /* 弹幕/字幕 */
-  setSubtitle() {
-    const t = this;
-    TCC.doTask('subtitle');
-    if (window.location.href.match(/bilibili\.com\/(video|watchlater)/)) {
-      t.tips(i18n.t(`tipsMsg.danmu${document.querySelector('.bui-danmaku-switch-input, .bui-switch-input[aria-Label=弹幕]').checked ? 'on' : 'off'}`));
-    }
-  },
-
-  /* 静音 */
-  setMute() {
-    const t = this;
-    const player = t.player();
-    player.muted = !player.muted;
-    t.tips(i18n.t(`tipsMsg.${player.muted ? '' : 'un'}mute`));
-  },
-
-  /* 连续播放 */
-  setAutoNext() {
-    TCC.doTask('autoNext');
-    const t = this;
-    if (window.location.href.match(/bilibili\.com\/watchlater/)) {
-      let autoContinue = [...document.querySelectorAll('.bilibili-player-video-btn-setting-right-playtype-content .bui-radio-input')].filter(x => !x.checked)[0];
-      if (autoContinue) {
-        autoContinue.click();
-        t.tips(autoContinue.nextElementSibling.textContent.trim());
-      }
-    } else if (window.location.href.match(/bilibili\.com\/video/)) {
-      t.tips(i18n.t(`tipsMsg.autonext${document.querySelector('.switch-button.on') ? 'off' : 'on'}`));
-    }
-  },
-
-  /* 回到开头 */
-  setBackToStart() {
-    const t = this;
-    t.setCurrentTime(0);
-    t.tips(i18n.t('tipsMsg.backtostart'));
-  },
-
   initPlaybackRate () {
     const t = this;
     t.playbackRate = t.getPlaybackRate();
@@ -13666,13 +13781,9 @@ const h5Player = {
   /* 视频画面旋转 90 度 */
   setRotate () {
     const t = this;
-    const player = t.player();
-    t.scale = Number(t.scale);
-    let prop = player.videoHeight / player.videoWidth;
-    t.scale = (t.rotate == 0 || t.rotate == 180) ? t.scale * prop : t.scale / prop;
-    t.setTransform(t.scale, t.translate);
-    t.rotate = (t.rotate + 90) % 360;
-    player.style.transform = `scale(${t.scale}) translate(${t.translate.x}px, ${t.translate.y}px) rotate( ${t.rotate}deg)`;
+    t.rotate += 90;
+    if (t.rotate % 360 === 0) t.rotate = 0;
+    t.setTransform(true);
     t.tips(i18n.t('tipsMsg.imgrotate') + t.rotate + '°');
   },
 
@@ -13838,13 +13949,6 @@ const h5Player = {
     const isDo = TCC.doTask('next');
     if (!isDo) {
       debug.log('当前网页不支持一键播放下个视频功能~');
-    }
-  },
-
-  setPrevVideo() {
-    const isDo = TCC.doTask('prev');
-    if (!isDo) {
-      debug.log('当前网页不支持一键播放上个视频功能~');
     }
   },
 
@@ -14633,14 +14737,8 @@ const h5Player = {
       return false
     }
 
-    /* 按 shift+y 复制视频 URL */
-    if (event.shiftKey && keyCode === 89) {
-      setClipboard(player.currentSrc);
-      t.tips(i18n.t('tipsMsg.copyurl'));
-    }
-
-    /* 按 alt+v 切换插件的可用状态 */
-    if (event.altKey && keyCode === 86) {
+    /* 切换插件的可用状态 */
+    if (event.ctrlKey && keyCode === 32) {
       t.enable = !t.enable;
       if (t.enable) {
         t.tips(i18n.t('tipsMsg.onplugin'));
@@ -15158,7 +15256,7 @@ async function h5PlayerInit () {
     });
 
     /* 初始化跨Tab控制逻辑 */
-    // crossTabCtl.init();
+    crossTabCtl.init();
 
     if (isInIframe()) {
       debug.log('h5Player init suc, in iframe:');
@@ -15198,11 +15296,11 @@ async function h5PlayerInit () {
    * 下面代码不会影响主要功能的正常使用
    * 不注释代码，禁用UI界面也有同等效果
    */
-  /* try {
+  try {
     configManager.get('ui.enable') !== false && remoteHelper.init();
   } catch (e) {
     debug.error('[remoteHelper.init]', e);
-  } */
+  }
 
   // console.clear = () => {}
 }
