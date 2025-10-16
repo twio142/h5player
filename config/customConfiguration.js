@@ -61,8 +61,8 @@ const customConfiguration = {
     },
     {
       desc: "启用或禁止自动恢复播放进度功能",
-      key: "shift+r",
-      command: "capture",
+      key: "ctrl+r",
+      command: "switchRestorePlayProgressStatus",
       disabled: true,
     },
     {
@@ -353,19 +353,13 @@ const customConfiguration = {
     },
     {
       desc: "静音",
-      key: "m",
+      key: "f10",
       command: "setMute",
     },
     {
       desc: "字幕/弹幕",
       key: "c",
       command: "setSubtitle",
-    },
-    {
-      desc: "自动连播",
-      key: "Backslash",
-      command: "setAutoNext",
-      when: "window.location.href.match(/bilibili\.com\/(video|watchlater)/)",
     },
     {
       desc: "BiliBili 聚焦弹幕框",
@@ -379,19 +373,26 @@ const customConfiguration = {
           document.querySelector(".bpx-player-dm-input").blur();
         }
       },
-      when: "window.location.href.match(/bilibili\.com\/(video|watchlater)/)",
+      when: "window.location.host == 'www.bilibili.com'",
     },
     {
-      desc: "YouTube 小窗播放",
-      key: "i",
+      desc: "随机播放",
+      key: "shift+x",
       command: () => {
-        if (window.location.href.match(/youtube.com\/watch/)) {
-          document.querySelector(".ytp-miniplayer-button.ytp-button").click();
-        } else if (window.location.href.match(/youtube.com\//)) {
-          document.querySelector(".ytp-miniplayer-button-top-left").click();
+        switch (window.location.host) {
+          case "www.bilibili.com":
+            document.querySelector(".list-playway-btn")?.click();
+            break;
+          case "www.youtube.com":
+            document.querySelector("button[aria-label='Shuffle playlist']")?.click();
+            break;
         }
       },
-      when: "window.location.href.match(/youtube.com\//)",
+    },
+    {
+      desc: "播放器居中",
+      key: "z",
+      command: "centerPlayer",
     },
   ],
   enhance: {
@@ -400,7 +401,7 @@ const customConfiguration = {
 
     blockSetCurrentTime: false,
     blockSetVolume: false,
-    allowExperimentFeatures: false,
+    allowExperimentFeatures: true,
   },
   debug: false,
 };
