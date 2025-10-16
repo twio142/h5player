@@ -6,8 +6,9 @@ export const en = defineConfig({
 
   themeConfig: {
     nav: [
+      { text: '4000+ AI open source projects', link: 'https://github.com/xxxily/hello-ai', target: '_blank' },
       { text: 'Docs', link: '/home/quickStart' },
-      { text: 'Reward the Author', link: '/home/rewardTheAuthor' },
+      // { text: 'Reward the Author', link: '/home/rewardTheAuthor' },
       {
         text: 'Related Links',
         ariaLabel: 'Related Links',
@@ -51,7 +52,7 @@ export const en = defineConfig({
             items: [
               { text: 'anzz.top', link: 'https://anzz.top', target: '_blank' },
               { text: 'ai.anzz.top', link: 'https://ai.anzz.top', target: '_blank' },
-              { text: '996.anzz.top', link: 'https://996.anzz.top', target: '_blank' },
+              { text: 'code-flux.anzz.top', link: 'https://code-flux.anzz.top', target: '_blank' },
               { text: 'h5player.anzz.top', link: 'https://h5player.anzz.top', target: '_blank' },
               { text: 'broadcast-message.anzz.top', link: 'https://broadcast-message.anzz.top', target: '_blank' },
             ]
@@ -82,6 +83,7 @@ export const en = defineConfig({
       {
         text: 'Other Projects',
         items: [
+          { text: 'code-flux', link: 'https://github.com/xxxily/code-flux' },
           { text: 'Hello-AI', link: 'https://github.com/xxxily/hello-ai' },
           { text: 'ffmpeg-script', link: 'https://github.com/xxxily/ffmpeg-script' },
           { text: 'local-appstore-for-1Panel', link: 'https://github.com/xxxily/local-appstore-for-1Panel' },
@@ -93,7 +95,7 @@ export const en = defineConfig({
         items: [
           { text: 'anzz.top', link: 'https://anzz.top', target: '_blank' },
           { text: 'ai.anzz.top', link: 'https://ai.anzz.top', target: '_blank' },
-          { text: '996.anzz.top', link: 'https://996.anzz.top', target: '_blank' },
+          { text: 'code-flux.anzz.top', link: 'https://code-flux.anzz.top', target: '_blank' },
           { text: 'h5player.anzz.top', link: 'https://h5player.anzz.top', target: '_blank' },
           { text: 'broadcast-message', link: 'https://broadcast-message.anzz.top', target: '_blank' },
         ]
@@ -101,7 +103,8 @@ export const en = defineConfig({
       {
         text: 'Recommendation',
         items: [
-          { text: 'AnakinAI', link: 'https://u.anzz.top/anakinai', target: '_blank' },
+          { text: 'Hello-AI', link: 'https://hello-ai.anzz.site', target: '_blank' },
+          { text: '4000+ AI open source projects', link: 'https://hello-ai.anzz.site/home/categories.html', target: '_blank' }
         ]
       }
     ]

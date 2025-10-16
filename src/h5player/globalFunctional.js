@@ -3,7 +3,7 @@ import configManager from './configManager'
 import { openInTab } from './helper'
 import version from './version'
 
-function refreshPage (msg) {
+function refreshPage(msg) {
   msg = msg || '配置已更改，马上刷新页面让配置生效？'
   const status = confirm(msg)
   if (status) {
@@ -13,9 +13,9 @@ function refreshPage (msg) {
 
 const isChinese = () => i18n.language().indexOf('zh') > -1
 
-function getHomePage () {
+function getHomePage() {
   const homePageLinks = [
-    'https://h5player.anzz.top/zh/',
+    'https://h5player.anzz.site/zh/',
     'https://h5player.anzz.top'
   ]
 
@@ -23,7 +23,7 @@ function getHomePage () {
   return isChinese() ? homePageLinks[0] : homePageLinks[1]
 }
 
-function openDocsByPath (path) {
+function openDocsByPath(path) {
   if (typeof path !== 'string' || path.startsWith('http') === true) {
     return false
   }
@@ -33,7 +33,7 @@ function openDocsByPath (path) {
   }
 
   const chinese = isChinese()
-  const basePath = chinese ? 'https://h5player.anzz.top' : 'https://h5player.anzz.top'
+  const basePath = chinese ? 'https://h5player.anzz.site' : 'https://h5player.anzz.top'
   let url = basePath + path
 
   /* 判断是否为中文环境，且link不是/zh开头，则自动加上/zh前缀 */
@@ -65,14 +65,14 @@ const globalFunctional = {
   openAuthorHomePage: {
     title: i18n.t('aboutAuthor'),
     desc: i18n.t('aboutAuthor'),
-    fn: () => { openInTab('https://u.anzz.top/xxxily') }
+    fn: () => { openInTab('https://github.com/xxxily') }
   },
   openHotkeysPage: {
     title: i18n.t('hotkeysDocs'),
     desc: i18n.t('hotkeysDocs'),
     fn: () => {
       const hotkeysDocs = [
-        'https://h5player.anzz.top/zh/home/quickStart#%E5%BF%AB%E6%8D%B7%E9%94%AE%E5%88%97%E8%A1%A8',
+        'https://h5player.anzz.site/zh/home/quickStart#%E5%BF%AB%E6%8D%B7%E9%94%AE%E5%88%97%E8%A1%A8',
         'https://h5player.anzz.top/home/quickStart#shortcut-key-list'
       ]
       openInTab(isChinese() ? hotkeysDocs[0] : hotkeysDocs[1])
@@ -98,11 +98,16 @@ const globalFunctional = {
     desc: i18n.t('aboutDonate'),
     fn: () => openDocsByPath('/home/aboutDonate')
   },
+  openAiProjectsPage: {
+    title: i18n.t('aiProjects'),
+    desc: i18n.t('aiProjects'),
+    fn: () => openInTab('https://hello-ai.anzz.site/home/categories.html')
+  },
   openAddGroupChatPage: {
     title: i18n.t('addGroupChat'),
     desc: i18n.t('addGroupChat'),
     fn: () => {
-      const groupChatUrl = isChinese() ? 'https://h5player.anzz.top/zh/home/quickStart#%E4%BA%A4%E6%B5%81%E7%BE%A4' : 'https://h5player.anzz.top/home/quickStart#discussion-groups'
+      const groupChatUrl = isChinese() ? 'https://h5player.anzz.site/zh/home/quickStart#%E4%BA%A4%E6%B5%81%E7%BE%A4' : 'https://h5player.anzz.top/home/quickStart#discussion-groups'
       openInTab(groupChatUrl)
     }
   },
@@ -125,7 +130,7 @@ const globalFunctional = {
     title: i18n.t('recommend'),
     desc: i18n.t('recommend'),
     fn: () => {
-      function randomZeroOrOne () {
+      function randomZeroOrOne() {
         return Math.floor(Math.random() * 2)
       }
 
@@ -140,10 +145,9 @@ const globalFunctional = {
     title: i18n.t('openCustomConfigurationEditor'),
     desc: i18n.t('openCustomConfigurationEditor'),
     fn: () => {
-      // const jsoneditorUrl = isChinese()
-      //   ? 'https://u.anzz.top/h5pjsoneditorzh'
-      //   : 'https://u.anzz.top/h5pjsoneditor'
-      const jsoneditorUrl = 'https://u.anzz.top/h5pjsoneditor'
+      const jsoneditorUrl = isChinese()
+        ? 'https://h5player.anzz.site/tools/json-editor/index.html?mode=tree&saveHandlerName=saveH5PlayerConfig&expandAll=true&json='
+        : 'https://h5player.anzz.top/tools/json-editor/index.html?mode=tree&saveHandlerName=saveH5PlayerConfig&expandAll=true&json='
       openInTab(jsoneditorUrl)
     }
   },
