@@ -12904,6 +12904,18 @@ const h5Player = {
     }
   },
 
+  /* 把播放器放在 viewport 中心 */
+  centerPlayer: function () {
+    const player = this.player();
+    if (player && typeof player.scrollIntoView === 'function') {
+      player.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center'
+      });
+    }
+  },
+
   /* 弹幕/字幕 */
   setSubtitle() {
     const t = this;
