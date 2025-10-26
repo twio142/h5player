@@ -50,6 +50,11 @@ const customConfiguration = {
       command: "setBackToStart",
     },
     {
+      desc: "输入时间跳转",
+      key: "i",
+      command: "seekToTime",
+    },
+    {
       desc: "切换画中画模式",
       key: "shift+p",
       command: "togglePictureInPicture",

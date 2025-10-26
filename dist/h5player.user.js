@@ -3922,7 +3922,8 @@ var zhCN = {
   },
   faqList: {
     //
-  }
+  },
+  seekToTimePrompt: '跳转到：'
 };
 
 var enUS = {
@@ -4076,6 +4077,7 @@ var enUS = {
     verticalMirror: 'vertical mirror',
     videozoom: 'Video zoom: '
   },
+  seekToTimePrompt: 'Jump to:',
   demo: 'demo-test'
 };
 
@@ -12953,6 +12955,45 @@ const h5Player = {
     const t = this;
     t.setCurrentTime(0);
     t.tips(i18n.t('tipsMsg.backtostart'));
+  },
+
+  seekToTime() {
+    const t = this;
+    const currentTime = t.player().currentTime;
+    // convert to hh:mm:ss format
+    function formatTime(seconds) {
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = Math.floor(seconds % 60);
+      return [h, m, s]
+        .map(v => v < 10 ? '0' + v : v)
+        .filter((v, i) => v !== '00' || i > 0)
+        .join(':');
+    }
+    // parse hh:mm:ss format to seconds
+    function parseTimeToSeconds(timeStr) {
+      const parts = timeStr.split(':').map(part => parseInt(part, 10));
+      let seconds = 0;
+      if (parts.length === 3) {
+        seconds += parts[0] * 3600; // hours
+        seconds += parts[1] * 60;   // minutes
+        seconds += parts[2] * 1;    // seconds
+      } else if (parts.length === 2) {
+        seconds += parts[0] * 60;   // minutes
+        seconds += parts[1] * 1;    // seconds
+      } else if (parts.length === 1) {
+        seconds += parts[0] * 1;    // seconds
+      }
+      return seconds;
+    }
+    const num = prompt(i18n.t('seekToTimePrompt'), formatTime(currentTime));
+    if (num) {
+      const seconds = parseTimeToSeconds(num);
+      if (isNaN(seconds) || seconds > t.player().duration) {
+        return;
+      }
+      t.setCurrentTime(seconds);
+    }
   },
 
   initPlaybackRate () {
