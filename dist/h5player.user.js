@@ -12890,11 +12890,35 @@ const h5Player = {
 
   /* 设置页面全屏 */
   setWebFullScreen: function () {
-    const t = this;
-    const player = t.player();
-    const isDo = TCC.doTask('webFullScreen');
-    if (!isDo && player && player._fullPageScreen_) {
+    if (TCC.doTask('webFullScreen')) {
+      return;
+    }
+    const player = this.player();
+    if (player?._fullPageScreen_) {
       player._fullPageScreen_.toggle();
+    } else if (player) {
+      if (!document.querySelector('style.__full_page_screen__')) {
+        const style = document.createElement('style');
+        style.className = '__full_page_screen__';
+        style.textContent = `
+          .__full_page_screen__ {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 999999 !important;
+            object-fit: contain !important;
+            background: black !important;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      if (!player.classList.contains('__full_page_screen__')) {
+        player.classList.add('__full_page_screen__');
+      } else {
+        player.classList.remove('__full_page_screen__');
+      }
     }
   },
 
