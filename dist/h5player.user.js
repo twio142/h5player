@@ -12942,6 +12942,17 @@ const h5Player = {
     }
   },
 
+  /* 复制视频 URL */
+  copyVideoURL: function () {
+    const t = this;
+    const player = t.player();
+    const src = player.currentSrc || player.src;
+    if (src) {
+      GM.setClipboard(src);
+      t.tips(i18n.t('tipsMsg.copyurl'));
+    }
+  },
+
   /* 弹幕/字幕 */
   setSubtitle() {
     const t = this;
@@ -14676,12 +14687,6 @@ const h5Player = {
 
       // debug.log('无可用的媒体元素，不执行相关操作')
       return false
-    }
-
-    /* 按 shift+y 复制视频 URL */
-    if (event.shiftKey && keyCode === 89) {
-      setClipboard(player.currentSrc);
-      t.tips(i18n.t('tipsMsg.copyurl'));
     }
 
     /* 按 alt+v 切换插件的可用状态 */
