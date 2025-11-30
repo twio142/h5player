@@ -13051,7 +13051,7 @@ const h5Player = {
         playbackRate = globalPlaybackRate;
       }
     }
-    return Number(Number(playbackRate).toFixed(1))
+    return Math.round(playbackRate * 20) / 20
   },
 
   /* 锁定playbackRate，禁止调速 */
@@ -13129,7 +13129,7 @@ const h5Player = {
         num = 16;
       }
 
-      num = Number(num.toFixed(1));
+      num = Math.round(num * 20) / 20;
       curPlaybackRate = num;
     } else {
       curPlaybackRate = t.getPlaybackRate();
