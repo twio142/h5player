@@ -12,6 +12,8 @@
 // @grant        unsafeWindow
 // @run-at       document-start
 // @license      GPL
+// @updateURL    https://raw.githubusercontent.com/twio142/h5player/refs/heads/master/config/config.user.js
+// @downloadURL  https://raw.githubusercontent.com/twio142/h5player/refs/heads/master/config/config.user.js
 // ==/UserScript==
 
 /* 自定义配置 */
@@ -51,13 +53,18 @@ const customConfiguration = {
     },
     {
       desc: "输入时间跳转",
-      key: "i",
+      key: "j",
       command: "seekToTime",
     },
     {
       desc: "切换画中画模式",
       key: "shift+p",
       command: "togglePictureInPicture",
+    },
+    {
+      desc: "复制视频 URL",
+      key: "shift+y",
+      command: "copyVideoURL",
     },
     {
       desc: "视频截图",
@@ -179,16 +186,16 @@ const customConfiguration = {
       command: "switchPlayStatus",
     },
     {
-      desc: "减速播放 -0.2",
+      desc: "减速播放 -0.25",
       key: "Comma",
       command: "setPlaybackRateDown",
-      args: [-0.2],
+      args: [-0.25],
     },
     {
-      desc: "加速播放 +0.2",
+      desc: "加速播放 +0.25",
       key: "Period",
       command: "setPlaybackRateUp",
-      args: [0.2],
+      args: [0.25],
     },
     {
       desc: "正常速度播放",
