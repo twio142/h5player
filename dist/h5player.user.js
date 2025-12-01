@@ -40,6 +40,8 @@
 // @grant        GM_setClipboard
 // @run-at       document-start
 // @license      GPL
+// @updateURL    https://raw.githubusercontent.com/twio142/h5player/refs/heads/master/dist/h5player.user.js
+// @downloadURL  https://raw.githubusercontent.com/twio142/h5player/refs/heads/master/dist/h5player.user.js
 // ==/UserScript==
 (function (w) { if (w) { w.name = 'h5player'; } })();
 
