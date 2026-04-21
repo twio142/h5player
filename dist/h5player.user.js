@@ -11621,11 +11621,11 @@ const h5playerUI = function (window) {var h5playerUI = (function () {
             //   action: 'openAboutDonatePage',
             //   args: ''
             // },
-            {
-              ...globalFunctional.openAiProjectsPage,
-              action: 'openAiProjectsPage',
-              args: ''
-            },
+            // {
+            //   ...globalFunctional.openAiProjectsPage,
+            //   action: 'openAiProjectsPage',
+            //   args: ''
+            // },
             {
               ...globalFunctional.openAuthorHomePage,
               action: 'openAuthorHomePage',

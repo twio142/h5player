@@ -75,7 +75,6 @@ const customConfiguration = {
       desc: "启用或禁止自动恢复播放进度功能",
       key: "ctrl+r",
       command: "switchRestorePlayProgressStatus",
-      disabled: true,
     },
     {
       desc: "垂直镜像翻转",
