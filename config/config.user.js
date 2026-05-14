@@ -53,7 +53,7 @@ const customConfiguration = {
     },
     {
       desc: "输入时间跳转",
-      key: "j",
+      key: "shift+j",
       command: "seekToTime",
     },
     {
@@ -469,6 +469,7 @@ const customTaskControlCenter = {
     webFullScreen: undefined,
     subtitle: ".ytp-subtitles-button",
     prev: ".ytp-prev-button",
+    blockSetVolume: true,
   },
   "bilibili.com": {
     wideScreen: ".bilibili-player-video-btn-widescreen, .bpx-player-ctrl-wide",
