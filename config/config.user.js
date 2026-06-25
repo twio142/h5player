@@ -189,12 +189,28 @@ const customConfiguration = {
       key: "Comma",
       command: "setPlaybackRateDown",
       args: [-0.25],
+      when: () => window.location.host !== 'pocketcasts.com',
+    },
+    {
+      desc: "Speed Down -0.2",
+      key: "Comma",
+      command: "setPlaybackRateDown",
+      args: [-0.2],
+      when: () => window.location.host === 'pocketcasts.com',
     },
     {
       desc: "Speed Up +0.25",
       key: "Period",
       command: "setPlaybackRateUp",
       args: [0.25],
+      when: () => window.location.host !== 'pocketcasts.com',
+    },
+    {
+      desc: "Speed Up +0.2",
+      key: "Period",
+      command: "setPlaybackRateUp",
+      args: [0.2],
+      when: () => window.location.host === 'pocketcasts.com',
     },
     {
       desc: "Reset Speed to 1x",
@@ -384,7 +400,7 @@ const customConfiguration = {
           document.querySelector(".bpx-player-dm-input").blur();
         }
       },
-      when: "window.location.host == 'www.bilibili.com'",
+      when: () => window.location.host === 'www.bilibili.com',
     },
     {
       desc: "Shuffle",
@@ -396,6 +412,9 @@ const customConfiguration = {
             break;
           case "www.youtube.com":
             document.querySelector("button[aria-label='Shuffle playlist']")?.click();
+            break;
+          case "open.spotify.com":
+            document.querySelector("button[aria-label*='Shuffle']")?.click();
             break;
         }
       },

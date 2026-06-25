@@ -14744,11 +14744,14 @@ const h5Player = {
         target: t,
         stopPropagation: true,
         preventDefault: true,
-        conditionHandler (condition) {
-          // TODO 完善条件限定回调逻辑
-          if (condition) {
-            return true
-          }
+        conditionHandler (...conditions) {
+          return conditions.every(condition => {
+            if (typeof condition === 'function') {
+              return !!condition.call(t);
+            } else {
+              return true;
+            }
+          });
         }
       });
 
