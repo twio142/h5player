@@ -3,7 +3,7 @@
 // @name:en      HTML5 player enhanced script custom configuration
 // @namespace    https://github.com/xxxily/h5player
 // @homepage     https://github.com/xxxily/h5player
-// @version      0.0.1
+// @version      0.0.2
 // @description  HTML5播放器自定义配置，按需定制自己的功能
 // @description:en  HTML5 video player enhanced script custom configuration
 // @author       ankvps
@@ -168,16 +168,16 @@ const customConfiguration = {
       args: [-0.1],
     },
     {
-      desc: "Volume Up 25%",
+      desc: "Volume Up 5%",
       key: "shift+arrowup",
       command: "setVolumeUp",
-      args: [0.25],
+      args: [0.05],
     },
     {
-      desc: "Volume Down 25%",
+      desc: "Volume Down 5%",
       key: "shift+arrowdown",
       command: "setVolumeDown",
-      args: [-0.25],
+      args: [-0.05],
     },
     {
       desc: "Play/Pause",
@@ -278,14 +278,12 @@ const customConfiguration = {
       key: "F",
       command: "freezeFrame",
       args: 1,
-      disabled: true,
     },
     {
       desc: "Previous Frame",
       key: "D",
       command: "freezeFrame",
       args: -1,
-      disabled: true,
     },
     {
       desc: "Brightness Up",
